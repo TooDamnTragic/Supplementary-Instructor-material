@@ -35,4 +35,9 @@ public class pwincess {
     public void setAge(int age) {
         this.age = age;
     }
+
+    @Override
+    public String toString() {
+        return name + ", the princess of " + kingdom + ", aged " + age;
+    }
 }
