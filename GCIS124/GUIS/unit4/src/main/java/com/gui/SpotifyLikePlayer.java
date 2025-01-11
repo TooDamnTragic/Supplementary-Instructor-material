@@ -20,11 +20,14 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
- * A simple "Spotify-like" music player using JavaFX basics.
+ * "Spotify-like" music player using JavaFX basics.
  */
 public class SpotifyLikePlayer extends Application {
 
-    // -- Day/Night mode colors (very simple example) --
+    // -- Day/Night mode colors --
+    //Maybe add more colors for themes
+    // ---------------------------
+
     private static final String DAY_BACKGROUND = "-fx-background-color: white;";
     private static final String DAY_TEXT_COLOR = "-fx-text-fill: black;";
     private static final String NIGHT_BACKGROUND = "-fx-background-color: #333333;";
@@ -79,22 +82,21 @@ public class SpotifyLikePlayer extends Application {
     public void start(Stage stage) {
         stage.setTitle("Spotify-Like Player");
 
+        
+        // Day/Night Toggle
         // ---------------------------
-        // 1) TOP: Day/Night Toggle
-        // ---------------------------
+
         HBox topBar = new HBox();
         topBar.setStyle(DAY_BACKGROUND);  // Start in day mode by default
 
         dayNightToggle = new ToggleButton("Night Mode");
-        // Switch between Day <-> Night on toggle
         dayNightToggle.setOnAction(e -> toggleDayNightMode());
-
-        // Push toggle button to the right side
         topBar.getChildren().add(dayNightToggle);
 
+        
+        // Album Art, Song Title, Artist
         // ---------------------------
-        // 2) CENTER: Album Art, Song Title, Artist
-        // ---------------------------
+        
         VBox centerBox = new VBox();
         centerBox.setSpacing(10);
         centerBox.setStyle(DAY_BACKGROUND); // match day mode initially
@@ -107,16 +109,18 @@ public class SpotifyLikePlayer extends Application {
         titleLabel = new Label("Song Title");
         titleLabel.setStyle(DAY_TEXT_COLOR + "-fx-font-size: 18px; -fx-font-weight: bold;");
 
+
         artistLabel = new Label("Artist Name");
         artistLabel.setStyle(DAY_TEXT_COLOR + "-fx-font-size: 14px;");
 
         centerBox.getChildren().addAll(albumArtView, titleLabel, artistLabel);
 
+
         // Make the center box stretch:
         VBox.setVgrow(albumArtView, Priority.ALWAYS);
 
-        // ---------------------------
-        // 3) BOTTOM: Playback Controls + Progress
+        
+        // Playback Controls + Progress
         // ---------------------------
         HBox bottomBar = new HBox();
         bottomBar.setSpacing(10);
@@ -131,7 +135,9 @@ public class SpotifyLikePlayer extends Application {
         progressLabel = new Label("0:00 / 0:00");
         progressLabel.setStyle(DAY_TEXT_COLOR);
 
-        // Wire up the button events
+        
+        
+        // Networking all the buttons to the backend
         prevButton.setOnAction(e -> handlePrevious());
         playButton.setOnAction(e -> handlePlay());
         pauseButton.setOnAction(e -> handlePause());
@@ -139,24 +145,16 @@ public class SpotifyLikePlayer extends Application {
 
         bottomBar.getChildren().addAll(prevButton, playButton, pauseButton, nextButton, progressLabel);
 
-        // ---------------------------
-        // BorderPane as root layout
+        // Setups
         // ---------------------------
         BorderPane root = new BorderPane();
         root.setTop(topBar);
         root.setCenter(centerBox);
         root.setBottom(bottomBar);
-
-        // ---------------------------
-        // Scene
-        // ---------------------------
         Scene scene = new Scene(root, 400, 400);
         stage.setScene(scene);
         stage.show();
 
-        // ---------------------------
-        // Initialize first track
-        // ---------------------------
         loadTrack(currentIndex);
     }
 
@@ -168,7 +166,7 @@ public class SpotifyLikePlayer extends Application {
             mediaPlayer.stop();
         }
 
-        // Ensure index is valid
+        // Ensure valid index
         currentIndex = (index + songFiles.length) % songFiles.length;
 
         // Create new Media & MediaPlayer
@@ -182,10 +180,10 @@ public class SpotifyLikePlayer extends Application {
         Image cover = new Image("file:" + albumCovers[currentIndex]);
         albumArtView.setImage(cover);
 
-        // Reset progress label
+        // Reset progress
         progressLabel.setText("0:00 / 0:00");
 
-        // When media is ready, we can get total duration
+        // Get duration
         mediaPlayer.setOnReady(() -> {
             Duration total = mediaPlayer.getMedia().getDuration();
             String totalStr = formatTime(total);
@@ -204,7 +202,7 @@ public class SpotifyLikePlayer extends Application {
     }
 
     /**
-     * Utility to format a Duration as M:SS (e.g., 3:05).
+     * Code to format a Duration as M:SS (e.g., 3:05).
      */
     private String formatTime(Duration duration) {
         if (duration == null || duration.isUnknown()) {
@@ -243,6 +241,8 @@ public class SpotifyLikePlayer extends Application {
         mediaPlayer.play();
     }
 
+
+
     /**
      * Toggle between Day and Night mode by updating the style.
      */
@@ -250,11 +250,9 @@ public class SpotifyLikePlayer extends Application {
         boolean nightMode = dayNightToggle.isSelected();
         if (nightMode) {
             dayNightToggle.setText("Day Mode");
-            // Switch to night mode
             setOverallTheme(NIGHT_BACKGROUND, NIGHT_TEXT_COLOR);
         } else {
             dayNightToggle.setText("Night Mode");
-            // Switch to day mode
             setOverallTheme(DAY_BACKGROUND, DAY_TEXT_COLOR);
         }
     }
@@ -286,6 +284,8 @@ public class SpotifyLikePlayer extends Application {
         }
     }
 
+    // Main
+    // ---------------------------
     public static void main(String[] args) {
         launch(args);
     }
