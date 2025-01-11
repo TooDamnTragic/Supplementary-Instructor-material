@@ -34,31 +34,31 @@ public class SpotifyLikePlayer extends Application {
     private static final String NIGHT_TEXT_COLOR = "-fx-text-fill: white;";
 
     // Array of songs (file paths) -- be sure these exist on your machine!
-    private String[] songFiles = {
+    private final String[] songFiles = {
         "src/main/java/com/gui/media/music/FEN.mp3",
         "src/main/java/com/gui/media/music/Doom.mp3",
         "src/main/java/com/gui/media/music/Oops.mp3"
     };
 
     // Parallel arrays for song info (could also make a small Song class)
-    private String[] songTitles = { 
+    private final String[] songTitles = { 
         "FE!N", 
         "The Only Thing They Fear Is You", 
         "Oops!!!" 
     };
-    private String[] artistNames = { 
+    private final String[] artistNames = { 
         "Travis Scott ft Playboi Carti", 
         "Mick Gordon", 
         "Yung Gravy"
     };
     
-    private String[] albumName = {
+    private final String[] albumName = {
         "UTOPIA",
         "Doom Eternal OST",
         "Oops!!!"
     };
 
-    private String[] albumCovers = {
+    private final String[] albumCovers = {
         "src/main/java/com/gui/media/images/cover1.png",
         "src/main/java/com/gui/media/images/cover2.png",
         "src/main/java/com/gui/media/images/cover3.png"
@@ -73,6 +73,7 @@ public class SpotifyLikePlayer extends Application {
     // UI Controls
     private Label titleLabel;
     private Label artistLabel;
+    private Label albumLabel;
     private Label progressLabel;
     private ImageView albumArtView;
 
@@ -113,7 +114,10 @@ public class SpotifyLikePlayer extends Application {
         artistLabel = new Label("Artist Name");
         artistLabel.setStyle(DAY_TEXT_COLOR + "-fx-font-size: 14px;");
 
-        centerBox.getChildren().addAll(albumArtView, titleLabel, artistLabel);
+        albumLabel = new Label("Album Name");
+        albumLabel.setStyle(DAY_TEXT_COLOR + "-fx-font-size: 12px;");
+
+        centerBox.getChildren().addAll(albumArtView, titleLabel, artistLabel, albumLabel);
 
 
         // Make the center box stretch:
@@ -174,9 +178,10 @@ public class SpotifyLikePlayer extends Application {
         Media media = new Media(mp3File.toURI().toString());
         mediaPlayer = new MediaPlayer(media);
 
-        // Update album art, song title, artist
+        // Update album art, song title, artist, album title
         titleLabel.setText(songTitles[currentIndex]);
         artistLabel.setText(artistNames[currentIndex]);
+        albumLabel.setText(albumName[currentIndex]);
         Image cover = new Image("file:" + albumCovers[currentIndex]);
         albumArtView.setImage(cover);
 
