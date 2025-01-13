@@ -117,6 +117,11 @@
     <plugin>
       <groupId>org.codehaus.mojo</groupId>
       <artifactId>exec-maven-plugin</artifactId>
+      <version>3.1.0</version>
+    <configuration>
+        <!-- Tell Maven exactly which main class to execute -->
+        <mainClass>com.gui.SpotifyLikePlayer</mainClass>
+    </configuration>
       <!-- no need to repeat version/config if it's in pluginManagement;
            but you can if you want to override something. -->
     </plugin>
