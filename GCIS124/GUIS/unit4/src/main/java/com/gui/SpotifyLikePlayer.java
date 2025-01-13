@@ -410,7 +410,8 @@ public class SpotifyLikePlayer extends Application {
         // ---------------------------
 
         HBox topBar = new HBox();
-        topBar.setStyle(DAY_BACKGROUND);  // Start in day mode by default
+        topBar.setStyle("-fx-background-color: transparent;");
+        
         topBar.setAlignment(Pos.CENTER_RIGHT);
         dayNightToggle = new ToggleButton("Night Mode");
         dayNightToggle.setOnAction(e -> toggleDayNightMode());
@@ -423,7 +424,7 @@ public class SpotifyLikePlayer extends Application {
         VBox centerBox = new VBox();
         centerBox.setSpacing(10);
         topBar.setAlignment(Pos.CENTER);
-        centerBox.setStyle(DAY_BACKGROUND); // match day mode initially
+        centerBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.3);"); 
         centerBox.setFillWidth(false);  
 
 
@@ -435,9 +436,9 @@ public class SpotifyLikePlayer extends Application {
         artistLabel = new Label("Artist Name");
         albumLabel = new Label("Album Name");
         
-        String TitleStyle  = "-fx-font-family: 'Poppins'; -fx-font-size: 18px; -fx-font-weight: bold;";
-        String ArtistStyle = "-fx-font-family: 'Poppins'; -fx-font-size: 14px;";
-        String AlbumStyle  = "-fx-font-family: 'Poppins'; -fx-font-size: 12px;";
+        String TitleStyle  = "-fx-font-family: 'Poppins'; -fx-font-size: 30px; -fx-font-weight: bold;";
+        String ArtistStyle = "-fx-font-family: 'Poppins'; -fx-font-size: 22px;";
+        String AlbumStyle  = "-fx-font-family: 'Poppins'; -fx-font-size: 18px;";
 
         titleLabel.setStyle(DAY_TEXT_COLOR + TitleStyle);
         artistLabel.setStyle(DAY_TEXT_COLOR + ArtistStyle);
@@ -459,7 +460,7 @@ public class SpotifyLikePlayer extends Application {
         // ---------------------------
         HBox bottomBar = new HBox();
         bottomBar.setSpacing(10);
-        bottomBar.setStyle(DAY_BACKGROUND);
+        bottomBar.setStyle("-fx-background-color: transparent;");
         bottomBar.setPadding(new javafx.geometry.Insets(10));
 
         Button prevButton = new Button("Prev");
@@ -642,9 +643,9 @@ public class SpotifyLikePlayer extends Application {
         // Center
         VBox centerBox = (VBox) mainUI.getCenter();
         centerBox.setStyle(backgroundStyle);
-        titleLabel.setStyle(textStyle + "-fx-font-family: 'Poppins'; -fx-font-size: 18px; -fx-font-weight: bold;");
-        artistLabel.setStyle(textStyle + "-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
-        albumLabel.setStyle(textStyle + "-fx-font-family: 'Poppins'; -fx-font-size: 12px;");
+        titleLabel.setStyle(textStyle + "-fx-font-family: 'Poppins'; -fx-font-size: 30px; -fx-font-weight: bold;");
+        artistLabel.setStyle(textStyle + "-fx-font-family: 'Poppins'; -fx-font-size: 22px;");
+        albumLabel.setStyle(textStyle + "-fx-font-family: 'Poppins'; -fx-font-size: 18px;");
 
         // Bottom
         HBox bottomBar = (HBox) mainUI.getBottom();
