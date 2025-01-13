@@ -316,7 +316,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
@@ -447,10 +446,13 @@ public class SpotifyLikePlayer extends Application {
 
 
         centerBox.getChildren().addAll(albumArtView, titleLabel, artistLabel, albumLabel);
+        mainUI.setCenter(centerBox);
 
 
         // Make the center box stretch:
-        VBox.setVgrow(albumArtView, Priority.ALWAYS);
+        // VBox.setVgrow(albumArtView, Priority.ALWAYS);//----------------------------------------------------------
+
+
 
         
         // Playback Controls + Progress
@@ -465,10 +467,20 @@ public class SpotifyLikePlayer extends Application {
         Button pauseButton = new Button("Pause");
         Button nextButton = new Button("Next");
 
+        //Progess label to be removed or moved to either side of the playback bar 
         progressLabel = new Label("0:00 / 0:00");
-        progressLabel.setStyle(DAY_TEXT_COLOR);
+        progressLabel.setStyle(DAY_TEXT_COLOR + "-fx-font-family: 'Poppins'; -fx-font-size: 12px;");
+
+        volumeSlider = new Slider(0.0, 1.0, 0.5); // range 0–1, default 0.5
+        volumeSlider.setPrefWidth(100);
 
         
+
+
+        playbackBar = new ProgressBar(0.0);
+        playbackBar.setPrefWidth(150);
+        playbackBar.setStyle("-fx-accent: #ff0000;"); 
+        // “-fx-accent” sets the fill color of a ProgressBar in JavaFX (by default)
         
         // Networking all the buttons to the backend
         prevButton.setOnAction(e -> handlePrevious());
@@ -476,18 +488,17 @@ public class SpotifyLikePlayer extends Application {
         pauseButton.setOnAction(e -> handlePause());
         nextButton.setOnAction(e -> handleNext());
 
-        bottomBar.getChildren().addAll(prevButton, playButton, pauseButton, nextButton, progressLabel);
+        bottomBar.getChildren().addAll(prevButton, playButton, pauseButton, nextButton, playbackBar, progressLabel,new Label("Volume:"), volumeSlider);
+        mainUI.setBottom(bottomBar);
 
-        // Setups
+        // Setup the Scene
         // ---------------------------
-        BorderPane root = new BorderPane();
-        root.setTop(topBar);
-        root.setCenter(centerBox);
-        root.setBottom(bottomBar);
-        Scene scene = new Scene(root, 400, 400);
+
+        Scene scene = new Scene(rootStack, 600, 500); // bigger to see background
         stage.setScene(scene);
         stage.show();
 
+        // Finally, load the first track
         loadTrack(currentIndex);
     }
 
@@ -502,7 +513,6 @@ public class SpotifyLikePlayer extends Application {
         // Ensure valid index
         currentIndex = (index + songFiles.length) % songFiles.length;
 
-        // Create new Media & MediaPlayer
         File mp3File = new File(songFiles[currentIndex]);
         Media media = new Media(mp3File.toURI().toString());
         mediaPlayer = new MediaPlayer(media);
@@ -514,8 +524,17 @@ public class SpotifyLikePlayer extends Application {
         Image cover = new Image("file:" + albumCovers[currentIndex]);
         albumArtView.setImage(cover);
 
+        blurredBackgroundView.setImage(cover);
+
         // Reset progress
+        playbackBar.setProgress(0.0);
         progressLabel.setText("0:00 / 0:00");
+        playbackBar.setStyle(
+        "-fx-accent: red;" +
+        "-fx-control-inner-background: #cccccc;" + // background of the bar when empty
+        "-fx-background-color: #999999;"           // outer border area
+        );
+
 
         // Get duration
         mediaPlayer.setOnReady(() -> {
@@ -528,9 +547,21 @@ public class SpotifyLikePlayer extends Application {
         mediaPlayer.currentTimeProperty().addListener((obs, oldTime, newTime) -> {
             Duration total = mediaPlayer.getTotalDuration();
             if (total != null && !total.isUnknown()) {
+                double current   = newTime.toSeconds();
+                double totalSecs = total.toSeconds();
+                double frac      = (totalSecs > 0) ? (current / totalSecs) : 0.0;
+                playbackBar.setProgress(frac); // 0.0 -> 1.0
+
                 String currentStr = formatTime(newTime);
-                String totalStr = formatTime(total);
+                String totalStr   = formatTime(total);
                 progressLabel.setText(currentStr + " / " + totalStr);
+            }
+        });
+
+        //volume slider
+        volumeSlider.valueProperty().addListener((ov, oldVal, newVal) -> {
+            if (mediaPlayer != null) {
+                mediaPlayer.setVolume(newVal.doubleValue());
             }
         });
     }
@@ -545,6 +576,7 @@ public class SpotifyLikePlayer extends Application {
         int seconds = (int) duration.toSeconds();
         int minutes = seconds / 60;
         int secs = seconds % 60;
+
         return String.format("%d:%02d", minutes, secs);
     }
 
@@ -581,6 +613,8 @@ public class SpotifyLikePlayer extends Application {
      * Toggle between Day and Night mode by updating the style.
      */
     private void toggleDayNightMode() {
+
+        
         boolean nightMode = dayNightToggle.isSelected();
         if (nightMode) {
             dayNightToggle.setText("Day Mode");
@@ -595,25 +629,38 @@ public class SpotifyLikePlayer extends Application {
      * Updates the background/text color for the entire UI.
      */
     private void setOverallTheme(String backgroundStyle, String textStyle) {
-        // Top bar
-        dayNightToggle.getParent().setStyle(backgroundStyle); 
-        dayNightToggle.setStyle(textStyle);
         
-        // Center region (titleLabel, artistLabel, albumArtView's container)
-        titleLabel.getParent().setStyle(backgroundStyle);
-        titleLabel.setStyle(textStyle + "-fx-font-size: 18px; -fx-font-weight: bold;");
-        artistLabel.setStyle(textStyle + "-fx-font-size: 14px;");
+        
+        StackPane rootStack = (StackPane) dayNightToggle.getScene().getRoot();
+        BorderPane mainUI = (BorderPane) rootStack.getChildren().get(1);
 
-        // Bottom bar
-        progressLabel.getParent().setStyle(backgroundStyle);
-        progressLabel.setStyle(textStyle);
-        
-        // Also re-style any other buttons in bottomBar if needed
-        // We can loop or do them individually
-        HBox bottomBar = (HBox) progressLabel.getParent();
+        // Top
+        HBox topBar = (HBox) mainUI.getTop();
+        topBar.setStyle(backgroundStyle);
+        dayNightToggle.setStyle(textStyle);
+
+        // Center
+        VBox centerBox = (VBox) mainUI.getCenter();
+        centerBox.setStyle(backgroundStyle);
+        titleLabel.setStyle(textStyle + "-fx-font-family: 'Poppins'; -fx-font-size: 18px; -fx-font-weight: bold;");
+        artistLabel.setStyle(textStyle + "-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
+        albumLabel.setStyle(textStyle + "-fx-font-family: 'Poppins'; -fx-font-size: 12px;");
+
+        // Bottom
+        HBox bottomBar = (HBox) mainUI.getBottom();
+
+        bottomBar.setStyle("-fx-background-color: white;");
+        playbackBar.setStyle(
+            "-fx-accent: #0073e6;"       +  // progress fill color
+            "-fx-control-inner-background: #e0e0e0;" +  // bar background color
+            "-fx-background-color: #999;"             // outer border area
+        );
+        volumeSlider.setStyle("-fx-control-inner-background: #e0e0e0;");
+
+        // Re-style the bottom buttons
         for (javafx.scene.Node node : bottomBar.getChildren()) {
             if (node instanceof Button) {
-                node.setStyle(textStyle);
+                node.setStyle(textStyle + "-fx-font-family: 'Poppins';");
             }
         }
     }
