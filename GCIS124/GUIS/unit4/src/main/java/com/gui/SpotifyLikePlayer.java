@@ -648,8 +648,8 @@ public class SpotifyLikePlayer extends Application {
 
         // Bottom
         HBox bottomBar = (HBox) mainUI.getBottom();
-
-        bottomBar.setStyle("-fx-background-color: white;");
+        // In toggleDayNightMode or setOverallTheme, apply something like:
+        bottomBar.setStyle("-fx-background-color: white;"); // if you want to keep white
         playbackBar.setStyle(
             "-fx-accent: #0073e6;"       +  // progress fill color
             "-fx-control-inner-background: #e0e0e0;" +  // bar background color
