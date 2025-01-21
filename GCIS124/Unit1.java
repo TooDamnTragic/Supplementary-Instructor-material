@@ -14,8 +14,6 @@ public class Unit1 {
 
         // System.out.println(14 * 5);
 
-        // System.out.println(14 * 5);
-
         // System.out.println(9 ** 5);
 
     }
