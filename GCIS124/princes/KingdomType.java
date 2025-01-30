@@ -1,10 +1,12 @@
 public enum KingdomType {
-    AIR("Cold"), WATER("Humid"), EARTH("Temperate"), FIRE("Arid"), MUSHROOM("High");
+    AIR("Cold"), WATER("Humid"),
+    EARTH("Temperate"), FIRE("Arid"),
+    MUSHROOM("High");
     
     private final String climate;
 
-    KingdomType(String climate) {
-        this.climate = climate;
+    KingdomType(String climatee) {
+        this.climate = climatee;
     }
 
     public String getClimate() {
