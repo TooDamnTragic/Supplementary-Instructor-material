@@ -21,7 +21,15 @@ public class Zodiac {
         return "Zodiac Sign: " + name + ", Date Range: " + dateRange;
     }
 
+//Look at this bunny, jus chillin in the sun
 
+//                       \ | /
+//                       - 0 -
+//                       / | \
+//
+// (\ (\ 
+// ( -.-)
+// o_(")(")
 
     public static void main(String[] args) {
         Zodiac z = new Zodiac("JinxSign", "July 1 - July 2");
