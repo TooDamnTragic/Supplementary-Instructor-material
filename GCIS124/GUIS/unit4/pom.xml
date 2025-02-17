@@ -1,33 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project 
-  xmlns="http://maven.apache.org/POM/4.0.0" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  
-  <modelVersion>4.0.0</modelVersion>
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                        http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <!-- Replace with your own groupId/artifactId/version -->
+  <modelVersion>4.0.0</modelVersion>
+  
   <groupId>com.gui</groupId>
   <artifactId>unit4</artifactId>
   <version>1.5</version>
 
-  <name>unit4</name>
-  <url>http://www.example.com</url>
-
   <properties>
-    <!-- Encoding -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- Java compiler level; can be 11, 17, etc. -->
+    <!-- JavaFX version -->
+    <javafx.version>20</javafx.version>
+    
+    <!-- Java compiler level -->
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    
-    <!-- Use the latest JavaFX version or whatever you prefer -->
-    <javafx.version>20</javafx.version>
+
+    <!-- If you have a local JavaFX SDK, put its path here:
+         e.g. C:/javafx-sdk-20 -->
+    <path.to.javafx.sdk>C:/path/to/javafx-sdk-20</path.to.javafx.sdk>
   </properties>
 
   <dependencies>
-    <!-- JavaFX Controls and FXML (and others if needed) -->
+    <!-- Direct JavaFX dependencies with explicit version -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
@@ -38,14 +35,13 @@
       <artifactId>javafx-fxml</artifactId>
       <version>${javafx.version}</version>
     </dependency>
-    <!-- If you need JavaFX Media (e.g., for playing audio/video) -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
       <version>${javafx.version}</version>
     </dependency>
     
-    <!-- Existing JUnit dependency for tests -->
+    <!-- Example test dependency -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -55,9 +51,8 @@
   </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <!-- 1) The exec-maven-plugin to run your JavaFX app -->
+    <plugins>
+      <!-- Use Exec Maven Plugin to run your main JavaFX class -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -65,74 +60,27 @@
         <configuration>
           <mainClass>com.gui.SpotifyLikePlayer</mainClass>
           <arguments>
+            <!-- If you have a local JavaFX SDK unzipped -->
             <argument>--module-path</argument>
             <argument>${path.to.javafx.sdk}/lib</argument>
+
+            <!-- Add whichever modules your app uses -->
             <argument>--add-modules</argument>
-            <argument>javafx.controls,javafx.fxml</argument>
+            <argument>javafx.controls,javafx.fxml,javafx.media</argument>
           </arguments>
         </configuration>
       </plugin>
 
-        <!-- 2) Standard Maven plugins for compiling, packaging, etc. -->
-        <plugin>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.0.0</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
-    <plugins>
-    <plugin>
-      <groupId>org.codehaus.mojo</groupId>
-      <artifactId>exec-maven-plugin</artifactId>
-      <version>3.1.0</version>
-    <configuration>
-        <!-- Tell Maven exactly which main class to execute -->
-        <mainClass>com.gui.SpotifyLikePlayer</mainClass>
-    </configuration>
-      <!-- no need to repeat version/config if it's in pluginManagement;
-           but you can if you want to override something. -->
-    </plugin>
-
-    <!-- other active plugins for building/compiling your project -->
-    <plugin>
-      <artifactId>maven-compiler-plugin</artifactId>
-      <version>3.8.0</version>
-      <!-- ... -->
-    </plugin>
-    <!-- etc. -->
-  </plugins>
+      <!-- Standard Maven compiler plugin for Java 17 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <source>17</source>
+          <target>17</target>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>

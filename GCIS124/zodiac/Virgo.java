@@ -10,6 +10,6 @@ public class Virgo extends Zodiac {
     }
     public static void main(String[] args) {
         Virgo V = new Virgo();
-        System.out.println(V);
+System.out.println(V);
     }
 }
