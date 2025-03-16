@@ -1,12 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/***
+/*
 
 Problem: Return the optimal set of coins for $2.26
 (DOLLAR, QUARTER, DIME, NICKEL, PENNY)
 
-***/
+*/
 
 
 
