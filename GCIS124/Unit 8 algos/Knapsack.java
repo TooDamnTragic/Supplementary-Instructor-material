@@ -51,3 +51,15 @@ public class Knapsack {
         System.out.println("Maximum Value: " + maxValue);
     }
 }
+
+
+
+
+
+
+
+// For the Knapsack Problem:
+// How does backtracking ensure that every possible combination is considered?
+// What if two items have the same weight and value? How would that affect the algorithm's choices?
+// Could a greedy algorithm efficiently solve this problem as well? If so, when?
+// How would you improve the backtracking solution to avoid redundant calculations?

@@ -28,3 +28,12 @@ public class GreedyChange {
         System.out.println("Change: " + result);
     }
 }
+
+
+
+
+// For the Greedy Change-Making Problem:
+// How does the greedy algorithm make decisions at each step?
+// In what situations would this algorithm fail to find the optimal solution? (Hint: Unconventional coin values)
+// What if there was a coin worth 99 cents—how would that impact the solution?
+// How could you modify the algorithm to handle non-standard coin values more efficiently?
