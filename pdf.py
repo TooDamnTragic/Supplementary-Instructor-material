@@ -44,11 +44,15 @@ def analyze_pdf(file_path):
         js_found = False
         for obj in pdf.objects:
             try:
-                obj_str = str(obj)
-                if "/JavaScript" in obj_str:
-                    print("Suspicious JavaScript found in object:")
-                    print(obj_str)
-                    js_found = True
+                if isinstance(obj, pikepdf.Dictionary) and "/JS" in obj:
+                    js_code = obj["/JS"]
+                    # Convert to string if needed
+                    if isinstance(js_code, pikepdf.String):
+                        js_str = str(js_code)
+                    else:
+                        js_str = js_code.read_bytes().decode('utf-8', errors='replace')
+                    print("\nFull JavaScript code found:")
+                    print(js_str)
             except Exception as inner_err:
                 continue
         if not js_found:
