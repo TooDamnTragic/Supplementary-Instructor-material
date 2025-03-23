@@ -7,101 +7,157 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.Stack;
 
 class Midterm3Graph {
-    private Map<String, List<Node>> map = new HashMap<>();
+    private Map<String, Vertex> vertices = new HashMap<>();
 
-    static class Node {
-        String city;
-        int distance;
+    // Vertex Class
+    static class Vertex {
+        private String value;
+        private List<Edge> neighbors = new ArrayList<>();
 
-        Node(String city, int distance) {
-            this.city = city;
-            this.distance = distance;
+        Vertex(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public List<Edge> getNeighbors() {
+            return neighbors;
+        }
+
+        public void addNeighbor(Vertex neighbor, int weight) {
+            neighbors.add(new Edge(neighbor, weight));
         }
     }
 
-    // Add an edge between two nodes
-    public void addEdge(String city1, String city2, int distance) {
-        map.putIfAbsent(city1, new ArrayList<>());
-        map.putIfAbsent(city2, new ArrayList<>());
-        map.get(city1).add(new Node(city2, distance));
-        map.get(city2).add(new Node(city1, distance)); // Bi-directional graph
+    // Edge Class for Weighted Connections
+    static class Edge {
+        Vertex vertex;
+        int weight;
+
+        Edge(Vertex vertex, int weight) {
+            this.vertex = vertex;
+            this.weight = weight;
+        }
     }
 
-    // BFS Algorithm
-    public void bfs(String start, String target) {
-        Queue<List<String>> queue = new LinkedList<>();
+    // Add Vertex
+    public void addVertex(String value) {
+        vertices.putIfAbsent(value, new Vertex(value));
+    }
+
+    // Add Edge (Connecting cities)
+    public void addEdge(String city1, String city2, int weight) {
+        Vertex v1 = vertices.get(city1);
+        Vertex v2 = vertices.get(city2);
+
+        if (v1 != null && v2 != null) {
+            v1.addNeighbor(v2, weight);
+            v2.addNeighbor(v1, weight); // Bi-directional graph
+        }
+    }
+
+    // DFS Pathfinding Algorithm with Weights
+    public List<String> dfPath(String start, String end) {
+        Vertex s = vertices.get(start);
+        Vertex e = vertices.get(end);
+
+        Set<Vertex> visited = new HashSet<>();
+        visited.add(s);
+
+        List<String> path = visitDFPath(s, e, visited);
+        if (path != null) {
+            System.out.println("DFS Path Found: " + path);
+        } else {
+            System.out.println("No path found via DFS.");
+        }
+        return path;
+    }
+
+    private List<String> visitDFPath(Vertex v, Vertex e, Set<Vertex> visited) {
+        if (v == e) {
+            List<String> path = new LinkedList<>();
+            path.add(e.getValue());
+            return path;
+        } else {
+            for (Edge neighbor : v.getNeighbors()) {
+                if (!visited.contains(neighbor.vertex)) {
+                    visited.add(neighbor.vertex);
+                    List<String> path = visitDFPath(neighbor.vertex, e, visited);
+                    if (path != null) {
+                        path.add(0, v.getValue());
+                        return path;
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    // BFS Algorithm with Weights (Shortest Path)
+    public void bfs(String start, String end) {
+        Queue<Path> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
-        queue.add(Collections.singletonList(start));
+
+        queue.add(new Path(Collections.singletonList(start), 0));
 
         while (!queue.isEmpty()) {
-            List<String> path = queue.poll();
-            String city = path.get(path.size() - 1);
+            Path currentPath = queue.poll();
+            String city = currentPath.path.get(currentPath.path.size() - 1);
 
-            if (city.equals(target)) {
-                System.out.println("BFS Shortest Path: " + path);
+            if (city.equals(end)) {
+                System.out.println("BFS Shortest Path: " + currentPath.path);
+                System.out.println("Total Distance: " + currentPath.distance);
                 return;
             }
 
             if (!visited.contains(city)) {
                 visited.add(city);
 
-                for (Node neighbor : map.getOrDefault(city, new ArrayList<>())) {
-                    List<String> newPath = new ArrayList<>(path);
-                    newPath.add(neighbor.city);
-                    queue.add(newPath);
+                for (Edge neighbor : vertices.get(city).getNeighbors()) {
+                    List<String> newPath = new ArrayList<>(currentPath.path);
+                    newPath.add(neighbor.vertex.getValue());
+                    queue.add(new Path(newPath, currentPath.distance + neighbor.weight));
                 }
             }
         }
         System.out.println("No path found via BFS.");
     }
 
-    // DFS Algorithm
-    public void dfs(String start, String target) {
-        Stack<List<String>> stack = new Stack<>();
-        Set<String> visited = new HashSet<>();
-        stack.push(Collections.singletonList(start));
+    // Helper Class for Tracking BFS Paths and Distances
+    static class Path {
+        List<String> path;
+        int distance;
 
-        while (!stack.isEmpty()) {
-            List<String> path = stack.pop();
-            String city = path.get(path.size() - 1);
-
-            if (city.equals(target)) {
-                System.out.println("DFS Found Path: " + path);
-                return;
-            }
-
-            if (!visited.contains(city)) {
-                visited.add(city);
-
-                for (Node neighbor : map.getOrDefault(city, new ArrayList<>())) {
-                    List<String> newPath = new ArrayList<>(path);
-                    newPath.add(neighbor.city);
-                    stack.push(newPath);
-                }
-            }
+        Path(List<String> path, int distance) {
+            this.path = path;
+            this.distance = distance;
         }
-        System.out.println("No path found via DFS.");
     }
 
     public static void main(String[] args) {
-        Midterm3Graph graphoo = new Midterm3Graph();
+        Midterm3Graph graph = new Midterm3Graph();
 
-        // Adding the nodes and distances
-        graphoo.addEdge("LA", "LV", 350);
-        graphoo.addEdge("LA", "DN", 850);
-        graphoo.addEdge("LV", "DN", 750);
-        graphoo.addEdge("LV", "DL", 1200);
-        graphoo.addEdge("DN", "KC", 670);
-        graphoo.addEdge("DL", "KC", 500);
-        graphoo.addEdge("KC", "CH", 1000);
-        graphoo.addEdge("DL", "NYC", 800);
-        graphoo.addEdge("NYC", "RO", 350);
+        // Adding cities as vertices
+        String[] cities = {"LA", "LV", "DN", "DL", "KC", "CH", "NYC", "RO"};
+        for (String city : cities) {
+            graph.addVertex(city);
+        }
 
-        // Finding the shortest path
-        graphoo.bfs("LA", "RO");  // BFS Example
-        graphoo.dfs("LA", "RO");  // DFS Example
+        // Adding connections (edges) with weights
+        graph.addEdge("LA", "LV", 350);
+        graph.addEdge("LA", "DN", 850);
+        graph.addEdge("LV", "DN", 750);
+        graph.addEdge("LV", "DL", 1200);
+        graph.addEdge("DN", "KC", 670);
+        graph.addEdge("DL", "NYC", 800);
+        graph.addEdge("NYC", "RO", 350);
+
+        // Finding paths using BFS and DFS
+        graph.dfPath("LA", "RO");  
+        graph.bfs("LA", "RO");   
     }
 }
