@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import sys
 
+#python3 exam2_demo.py C.txt D.txt
+
 def read_data(filename):
     #returns a list of tuples: [(x1, y1), (x2, y2), ...].
     
